@@ -1,0 +1,18 @@
+#query{
+    width: 200px;
+    height: 30px;
+    border: 1px solid #66b0db;
+    border-radius: 4px;
+    background: white;
+    color: black;
+}
+
+input{
+    width: 100px;
+    height: 30px;
+    font-size: 14px;
+    color: white;
+    background: #66b0db;
+    border: 0;
+    border-radius: 4px;
+}

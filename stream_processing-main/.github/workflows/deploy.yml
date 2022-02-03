@@ -1,0 +1,64 @@
+---
+name: Build and Deploy spark
+
+env:
+  ARTIFACT_NAME: spark.zip
+  CODEDEPLOY_APPLICATION_NAME: csye7200-spark
+  CODEDEPLOY_APPLICATION_DEPLOYMENT_GROUP_NAME: csye7200-spark-deployment
+  AWS_REGION: us-east-1
+
+on:
+  push:
+    branches: [main]
+jobs:
+  ci_cd:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Maven Cache
+      # You may pin to the exact commit or the version.
+      # uses: skjolber/maven-cache-github-action@9f54dbd468d53eb2ac8f46864b5880e28d9100a9
+      uses: skjolber/maven-cache-github-action@v1.1
+      with: 
+        step: restore
+
+
+    - name: Build ARTIFACT
+      run: |
+        mvn install
+        mvn package
+        mv ./target/real_time_twitter_sentiment_analytics_system-1.0-SNAPSHOT-jar-with-dependencies.jar ./real_time_twitter_sentiment_analytics_system-1.0-SNAPSHOT-jar-with-dependencies.jar
+        zip -r spark.zip real_time_twitter_sentiment_analytics_system-1.0-SNAPSHOT-jar-with-dependencies.jar ./appspec.yml ./scripts
+        mkdir cd_artifact
+        mv spark.zip ./cd_artifact/spark.zip
+        ls
+
+    - name: AWS CREDENTIALS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{secrets.AWS_ACCESS_KEY}}
+        aws-secret-access-key: ${{secrets.AWS_SECRET_KEY}}
+        aws-region: ${{env.AWS_REGION}}
+
+    - name: Copy artifact to S3
+      run: |
+        aws s3 sync ./cd_artifact s3://${{secrets.S3_CODEDEPLOY_BUCKET}}
+
+    - name: CodeDeploy API call
+      run: |
+        output=$(aws deploy create-deployment \
+          --application-name ${{env.CODEDEPLOY_APPLICATION_NAME}} \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --deployment-group-name ${{env.CODEDEPLOY_APPLICATION_DEPLOYMENT_GROUP_NAME}} \
+          --description "CSYE7200 - CodeDeploy" \
+          --s3-location bucket=${{secrets.S3_CODEDEPLOY_BUCKET}},key=${{env.ARTIFACT_NAME}},bundleType=zip \
+          --region ${{env.AWS_REGION}} \
+          --output json)
+
+        echo $output
+
+        dId=$(echo $output | jq -r '.deploymentId')
+
+        aws deploy wait deployment-successful --deployment-id $dId

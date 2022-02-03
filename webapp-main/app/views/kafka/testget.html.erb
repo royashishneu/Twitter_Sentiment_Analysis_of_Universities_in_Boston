@@ -1,0 +1,19 @@
+<h1>Listing Message</h1>
+ 
+<table>
+  <tr>
+    <th>key</th>
+    <th>value</th>
+    <th>offset</th>
+  </tr>
+ 
+<% KAFKA.each_message(topic: "twitterdata") do |m| %>
+  <tr>
+    <td><%= m.key %></td>
+    <td><%= m.value %></td>
+    <td><%= m.offset %></td>
+  </tr>
+<% end %>
+</table>
+
+<br>

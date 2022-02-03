@@ -1,0 +1,18 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/spark-install
+hooks:
+  BeforeInstall:
+    - location: scripts/rails-stop.sh
+      runas: root
+      timeout: 60
+  AfterInstall:
+    - location: scripts/rails-install.sh
+      runas: root
+      timeout: 1200
+  ApplicationStart:
+    - location: scripts/rails-start.sh
+      runas: root
+      timeout: 60

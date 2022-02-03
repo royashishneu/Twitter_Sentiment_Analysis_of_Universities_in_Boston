@@ -1,0 +1,20 @@
+<%=stylesheet_link_tag "search.css" %>
+<div>
+    <br>
+    <br>
+    <br>
+    <br>
+
+</div>
+<div align=center>
+    <img id="title" src="<%= asset_path('title.png') %>" weight="1000" height="110">
+    <br>
+    <br>
+    <%= form_with url: "/search", method: :get do |form| %>
+        <%= form.text_field :query %>
+        <br>
+        <br>
+        <%= form.submit "Search" %>
+    <% end %>
+</div>
+~              

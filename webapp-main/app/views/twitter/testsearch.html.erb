@@ -1,0 +1,7 @@
+<% TWITTER.search("trump", result_type: "recent").take(5).collect do |tweet|%>
+
+    <%= tweet.full_text %>
+    <br>
+    <br>
+    <br>
+<% end %>

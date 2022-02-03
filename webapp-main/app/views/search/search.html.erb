@@ -1,0 +1,22 @@
+<head>
+    <meta http-equiv="refresh" content="8;url=http://demo.csye7200.xyz/showresult?query=<%= params[:query]%>&token=<%= @token %>">
+</head>
+
+<%= params[:query]%>
+<br>
+<% TWITTER.search(params[:query], result_type: "recent", tweet_mode: "extended").take(150).collect do |tweet|%>
+    <% if tweet.instance_variable_defined?(:@favourites_count) %>
+        <% f_count =  tweet.favourites_count.to_s%>
+    <% else %>
+        <% f_count =  tweet.favorite_count.to_s%>
+    <% end %>
+    <% KAFKA.deliver_message(params[:query] + "%%%%%" + @token + "%%%%%" + tweet.text + "%%%%%" + f_count + "%%%%%" + tweet.retweet_count.to_s, topic: "twitterdata") %>
+    <%= tweet.full_text %>
+    <br>
+    favorite_count:
+    <%= f_count %>
+    <br>
+    retweet_count:
+    <%= tweet.retweet_count %>
+    <%= tweet.attrs %>
+<% end %>

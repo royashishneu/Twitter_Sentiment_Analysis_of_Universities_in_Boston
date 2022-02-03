@@ -1,0 +1,50 @@
+{
+    "variables": {
+        "aws_access_key": "",
+        "aws_secret_key": "",
+        "aws_region": "us-east-1",
+        "subnet_id": "subnet-031485fa5db443db8",
+        "source_ami": "ami-09e67e426f25ce0d7",
+        "ssh_username": "ubuntu"
+    },
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+            "region": "{{user `aws_region`}}",
+            "instance_type": "t2.micro",
+            "subnet_id": "{{user `subnet_id`}}",
+            "source_ami": "{{user `source_ami`}}",
+            "ssh_username": "{{user `ssh_username`}}",
+            "ami_name": "csye7200_zookeeper_{{timestamp}}",
+            "ami_description": "Ubuntu zookeeper AMI for CSYE7200",
+            "launch_block_device_mappings": [
+                {
+                    "device_name": "/dev/sda1",
+                    "volume_size": 8,
+                    "volume_type": "gp2",
+                    "delete_on_termination": true
+                }
+            ]
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "environment_vars": [
+                "FOO=foo"
+            ],
+            "inline": [
+                "sudo apt-get update",
+                "sudo apt-get update",
+                "sudo apt-get install openjdk-8-jdk -y",
+                "wget https://csye7200-team5-config.s3.amazonaws.com/installer/apache-zookeeper-3.5.9-bin.tar.gz",
+                "tar zxvf apache-zookeeper-3.5.9-bin.tar.gz",
+                "wget https://csye7200-team5-config.s3.amazonaws.com/config/zookeeper/zoo.cfg",
+                "mv ~/zoo.cfg apache-zookeeper-3.5.9-bin/conf/zoo.cfg",
+                "rm apache-zookeeper-3.5.9-bin.tar.gz"
+            ]
+        }
+    ]
+}

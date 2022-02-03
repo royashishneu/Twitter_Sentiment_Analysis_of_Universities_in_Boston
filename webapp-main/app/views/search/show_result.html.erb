@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data0 = google.visualization.arrayToDataTable([
+          ['Sentiment', 'Count'],
+          ['VeryNegative',     <%= @result_num[0] %>],
+          ['Negative',      <%= @result_num[1] %>],
+          ['Neutral',  <%= @result_num[2] %>],
+          ['Positive', <%= @result_num[3] %>],
+          ['VeryPositive',    <%= @result_num[4] %>]
+        ]);
+        var options0 = {
+          title: 'Sentiment Result'
+        };
+        var chart0 = new google.visualization.PieChart(document.getElementById('piechart0'));
+        chart0.draw(data0, options0);
+
+
+        // var data1 = google.visualization.arrayToDataTable([
+        //   ['Sentiment', 'Count'],
+        //   ['VeryNegative',     <%= @like_count[0] %>],
+        //   ['Negative',      <%= @like_count[1] %>],
+        //   ['Neutral',  <%= @like_count[2] %>],
+        //   ['Positive', <%= @like_count[3] %>],
+        //   ['VeryPositive',    <%= @like_count[4] %>]
+        // ]);
+        // var options1 = {
+        //   title: 'Favourite Count'
+        // };
+        // var chart1 = new google.visualization.PieChart(document.getElementById('piechart1'));
+        // chart1.draw(data1, options1);
+
+        var data2 = google.visualization.arrayToDataTable([
+          ['Sentiment', 'Count'],
+          ['VeryNegative',     <%= @forward_count[0] %>],
+          ['Negative',      <%= @forward_count[1] %>],
+          ['Neutral',  <%= @forward_count[2] %>],
+          ['Positive', <%= @forward_count[3] %>],
+          ['VeryPositive',    <%= @forward_count[4] %>]
+        ]);
+        var options2 = {
+          title: 'Retweet Count'
+        };
+        var chart2 = new google.visualization.PieChart(document.getElementById('piechart2'));
+        chart2.draw(data2, options2);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="piechart0" style="width: 900px; height: 500px; display: table-cell"></div>
+    <div id="piechart2" style="width: 900px; height: 500px; display: table-cell"></div>
+  </body>
+</html>
