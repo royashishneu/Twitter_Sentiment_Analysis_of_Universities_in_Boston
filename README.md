@@ -1,1 +1,1 @@
-# Twitter_sentiment_analysis_of_Universities_in_Boston
+# Twitter sentiment analysis of Universities in Boston
